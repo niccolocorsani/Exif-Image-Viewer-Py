@@ -25,7 +25,8 @@ class Controller(QMessageBox):
 
     def getExtendedExifData(self, imagePath):
         exifData = self.model.imageExtendedDic[imagePath]
-        if exifData == None:   ## Differnt behavior of the function _getExif
+
+        if exifData is None:   ## Differnt behavior of the function _getExif
             self.errorMessage("The image doesn't contain Exif Data")
             return noExif
         return self.model.imageExtendedDic[imagePath]
@@ -34,3 +35,6 @@ class Controller(QMessageBox):
         msgBox = QMessageBox()
         msgBox.setText(stringError)
         msgBox.exec()
+
+
+

@@ -17,6 +17,7 @@ class View(QWidget):
         self.model = model
         self.currentImagePath = None
         self.currentExifInfo = {}
+        self.currentRotation = 0
         self.listOfPath = []
 
         uic.loadUi("ui.ui", self)
@@ -36,7 +37,7 @@ class View(QWidget):
         self.next.clicked.connect(self.renderNextImage)
         self.rotateLeft.clicked.connect(self.leftRotate)
         self.rotateRight.clicked.connect(self.rightRotate)
-
+        self.openMap.clicked.connect(self.openMapPosition)
 
     def renderPreviousImage(self):
         index = self.listOfPath.index(self.currentImagePath)
@@ -85,23 +86,38 @@ class View(QWidget):
         self.controller.updateDataModel(pathName)
         self.currentImagePath = pathName
 
-
     def leftRotate(self):
+        self.currentRotation = self.currentRotation - 90
         pixmap = QPixmap(self.currentImagePath)
-        pixmap = pixmap.transformed(QTransform().rotate(-90))
-        scaled = pixmap.scaled(self.labelOfImage.width(), self.labelOfImage.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+        pixmap = pixmap.transformed(QTransform().rotate(self.currentRotation))
+        scaled = pixmap.scaled(self.labelOfImage.width(), self.labelOfImage.height(),
+                               QtCore.Qt.AspectRatioMode.KeepAspectRatio)
         self.labelOfImage.setPixmap(scaled)
 
-
     def rightRotate(self):
+        self.currentRotation = self.currentRotation + 90
         pixmap = QPixmap(self.currentImagePath)
-        pixmap = pixmap.transformed(QTransform().rotate(90))
-        scaled = pixmap.scaled(self.labelOfImage.width(), self.labelOfImage.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+        pixmap = pixmap.transformed(QTransform().rotate(self.currentRotation))
+        scaled = pixmap.scaled(self.labelOfImage.width(), self.labelOfImage.height(),
+                               QtCore.Qt.AspectRatioMode.KeepAspectRatio)
         self.labelOfImage.setPixmap(scaled)
 
     def openMapPosition(self):
-        position = self.tableModel.getPosition()
+
+        self.getExifInfo('detailed')  ## to get current Exif Info
+        try:
+            positionN = self.convertDMSTodecimal(self.currentExifInfo['GPSInfo'][2])
+            positionE = self.convertDMSTodecimal(self.currentExifInfo['GPSInfo'][4])
+        except:
+            self.controller.errorMessage('The selected image does not have GPS info')
+            return
+        position = str(positionN) + ',' + str(positionE)
+        print(position)
         if (position is not None):
-            webbrowser.open_new("https://www.google.com/maps/search/?api=1&query=" + str(position))
+            webbrowser.open_new("https://www.google.com/maps/search/?api=1&query=" + position)
         else:
-            webbrowser.open_new("https://www.google.com/maps/search/")
+            self.controller.errorMessage('Problem parsing the position')
+
+    def convertDMSTodecimal(self, value):
+        degree, minute, second = value
+        return degree + (minute / 60.0) + (second / 3600.0)

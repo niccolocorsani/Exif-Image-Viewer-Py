@@ -42,12 +42,4 @@ class Model:
         except Exception:
             return None
 
-    def fun(self):
-        print("dm")
 
-
-if __name__ == "__main__":
-    model = Model()
-#  exif = model.getExif(ROOT_DIR+"/ExifImageViewer/test_image.jpeg")
-#  print(exif)
-# Model.getExif(ROOT_DIR+"/ExifImageViewer/test_image.jpeg")
