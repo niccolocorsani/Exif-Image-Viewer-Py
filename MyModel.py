@@ -26,7 +26,7 @@ class Model:
                 if key in PIL.ExifTags.TAGS
             }
             return exif
-        except Exception as ex:
+        except Exception:
             return None
 
     @staticmethod
@@ -39,7 +39,7 @@ class Model:
                 if key in PIL.ExifTags.TAGS
             }
             return exif
-        except Exception as ex:
+        except Exception:
             return None
 
     def fun(self):

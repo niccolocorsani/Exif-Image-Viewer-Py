@@ -1,8 +1,9 @@
 import os
 
 from PyQt6 import QtCore, uic, QtWidgets
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QTransform
 from PyQt6.QtWidgets import QFileDialog, QWidget, QTableWidgetItem
+import webbrowser
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -15,6 +16,7 @@ class View(QWidget):
         self.controller = controller
         self.model = model
         self.currentImagePath = None
+        self.currentExifInfo = {}
         self.listOfPath = []
 
         uic.loadUi("ui.ui", self)
@@ -27,11 +29,14 @@ class View(QWidget):
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.Stretch)
         self.table.resizeColumnsToContents()
 
-        self.generalExifInfo.clicked.connect(lambda: self.updateTable('general'))
-        self.detailedExifInfo.clicked.connect(lambda: self.updateTable('detailed'))
+        self.generalExifInfo.clicked.connect(lambda: self.getExifInfo('general'))
+        self.detailedExifInfo.clicked.connect(lambda: self.getExifInfo('detailed'))
         self.addPhoto.clicked.connect(self.openImage)
         self.previous.clicked.connect(self.renderPreviousImage)
         self.next.clicked.connect(self.renderNextImage)
+        self.rotateLeft.clicked.connect(self.leftRotate)
+        self.rotateRight.clicked.connect(self.rightRotate)
+
 
     def renderPreviousImage(self):
         index = self.listOfPath.index(self.currentImagePath)
@@ -45,7 +50,7 @@ class View(QWidget):
             pathPrevious = self.listOfPath[index + 1]
             self.renderImage(pathPrevious)
 
-    def updateTable(self, behavior):
+    def getExifInfo(self, behavior):
 
         self.table.setRowCount(0)
         try:
@@ -53,6 +58,7 @@ class View(QWidget):
                 exifData = self.controller.getExifData(self.currentImagePath)
             else:
                 exifData = self.controller.getExtendedExifData(self.currentImagePath)
+            self.currentExifInfo = exifData
             i = 0
             for key in exifData.keys():
                 self.table.insertRow(i)
@@ -63,20 +69,39 @@ class View(QWidget):
             self.controller.errorMessage(str(ex))
 
     def openImage(self):
-        try:
-            fname = QFileDialog.getOpenFileName(self, "Open File", ROOT_DIR,
-                                                "All Files (*);;PNG Files (*.png);;Jpg Files (*.jpg)")
-            self.listOfPath.append(fname[0])
-            if fname:
-                self.renderImage(fname[0])
-        except Exception as ex:
-            self.controller.errorMessage(str(ex))
+
+        fname = QFileDialog.getOpenFileName(self, "Open File", ROOT_DIR,
+                                            "All Files (*);;PNG Files (*.png);;Jpg Files (*.jpg)")
+        self.listOfPath.append(fname[0])
+        if fname:
+            self.renderImage(fname[0])
 
     def renderImage(self, pathName):
-        try:
-            pixmap = QPixmap(pathName)
-            self.labelOfImage.setPixmap(pixmap.scaled(512, 512, QtCore.Qt.AspectRatioMode.KeepAspectRatio))
-            self.controller.updateDataModel(pathName)
-            self.currentImagePath = pathName
-        except Exception as ex:
-            self.controller.errorMessage(str(ex))
+        pixmap = QPixmap(pathName)
+        if pixmap.isNull():
+            self.controller.errorMessage('Problem rendering the image')
+            return
+        self.labelOfImage.setPixmap(pixmap.scaled(512, 512, QtCore.Qt.AspectRatioMode.KeepAspectRatio))
+        self.controller.updateDataModel(pathName)
+        self.currentImagePath = pathName
+
+
+    def leftRotate(self):
+        pixmap = QPixmap(self.currentImagePath)
+        pixmap = pixmap.transformed(QTransform().rotate(-90))
+        scaled = pixmap.scaled(self.labelOfImage.width(), self.labelOfImage.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+        self.labelOfImage.setPixmap(scaled)
+
+
+    def rightRotate(self):
+        pixmap = QPixmap(self.currentImagePath)
+        pixmap = pixmap.transformed(QTransform().rotate(90))
+        scaled = pixmap.scaled(self.labelOfImage.width(), self.labelOfImage.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+        self.labelOfImage.setPixmap(scaled)
+
+    def openMapPosition(self):
+        position = self.tableModel.getPosition()
+        if (position is not None):
+            webbrowser.open_new("https://www.google.com/maps/search/?api=1&query=" + str(position))
+        else:
+            webbrowser.open_new("https://www.google.com/maps/search/")

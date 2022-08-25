@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QMessageBox
 
 from MyView import View
 
+noExif = {'No ExifData': 'No ExifData'}
 
 class Controller(QMessageBox):
 
@@ -19,14 +20,14 @@ class Controller(QMessageBox):
         exifData = self.model.imageDic[imagePath]
         if exifData == {}:
             self.errorMessage("The image doesn't contain Exif Data")
-            return {'No ExifData': 'No ExifData'}
+            return noExif
         return self.model.imageDic[imagePath]
 
     def getExtendedExifData(self, imagePath):
         exifData = self.model.imageExtendedDic[imagePath]
         if exifData == None:   ## Differnt behavior of the function _getExif
             self.errorMessage("The image doesn't contain Exif Data")
-            return {'No ExifData': 'No ExifData'}
+            return noExif
         return self.model.imageExtendedDic[imagePath]
 
     def errorMessage(self, stringError):
