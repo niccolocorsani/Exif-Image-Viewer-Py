@@ -10,11 +10,11 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class View(QWidget):
 
-    def __init__(self, controller, model):
+    def __init__(self, controller,model):
         super(View, self).__init__()
 
-        self.controller = controller
         self.model = model
+        self.controller = controller
         self.currentImagePath = None
         self.currentExifInfo = {}
         self.currentRotation = 0
@@ -56,11 +56,18 @@ class View(QWidget):
         self.table.setRowCount(0)
         try:
             if behavior == 'general':
-                exifData = self.controller.getExifData(self.currentImagePath)
+                exifData = self.model.imageDic[self.currentImagePath]
+                if exifData == {}:
+                    self.controller.errorMessage("The image doesn't contain Exif Data")
+                    return
             else:
-                exifData = self.controller.getExtendedExifData(self.currentImagePath)
+                exifData = self.model.imageExtendedDic[self.currentImagePath]
+                if exifData is None:
+                    self.controller.errorMessage("The image doesn't contain Exif Data")
+                    return
             self.currentExifInfo = exifData
             i = 0
+
             for key in exifData.keys():
                 self.table.insertRow(i)
                 self.table.setItem(i, 0, QTableWidgetItem(key))

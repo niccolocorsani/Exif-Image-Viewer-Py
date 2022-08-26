@@ -7,7 +7,5 @@ import sys
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     model = Model()
-    controller = Controller(model)
-    ui = View(controller, model)
-    ui.show()
+    controller = Controller()
     sys.exit(app.exec())
