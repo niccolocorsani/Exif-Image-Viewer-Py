@@ -6,9 +6,9 @@ In the folder you can find images to test the application.
 
 The features that the application offer are those of:
 
--Open an image
+- Open an image
 
--Place it at 512x512 size
+- Place it at 512x512 size
 
 -Rotate the image
 
