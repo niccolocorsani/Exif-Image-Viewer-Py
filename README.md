@@ -7,16 +7,11 @@ In the folder you can find images to test the application.
 The features that the application offer are those of:
 
 - Open an image
-
 - Place it at 512x512 size
-
--Rotate the image
-
--Get general image exif metadata
-
--Get detailed exif metadata
-
--Open Google Maps at the location where the photo was taken
+- Rotate the image
+- Get general image exif metadata
+- Get detailed exif metadata
+- Open Google Maps at the location where the photo was taken
 
 ## Requirements
 | Software           | Version        |
