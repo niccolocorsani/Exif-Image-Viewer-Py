@@ -2,6 +2,13 @@
 
 
 This is an implementation of the Exif image viewer tool.
+In the folder you can find images to test the application.
+
+V for audio files.It is not used in JPEG 2000 or GIF.
+The metadata tags defined in the Exif standard cover a broad spectrum:
+ - Date and time information. Digital cameras will record the current date and time and save this in the metadata
+ - Camera settings. Th
+
 
 
 ## Requirements
