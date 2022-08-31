@@ -30,4 +30,6 @@ Images of Ui:
 <img width="1117" alt="Schermata 2022-08-31 alle 18 50 14" src="https://user-images.githubusercontent.com/79635059/187734880-31c09b4a-4384-4637-96d7-a004233ef5f6.png">
 <img width="1115" alt="Schermata 2022-08-31 alle 18 50 38" src="https://user-images.githubusercontent.com/79635059/187734894-7a9288d3-bac3-4c18-8bd9-4cafde4b95e4.png">
 
-Below you can find a report of the paper
+Below you can find a report of the paper:[Exif-Viewr Relation.pdf](https://github.com/niccolocorsani/Exif-Image-Viewer-Py/files/9463432/Exif-Viewr.Relation.pdf)
+
+
