@@ -1,7 +1,7 @@
 # Exif-Image-Viewer-Py
 
 
-This is an implementation of the Exif image viewer tool. As you can see in the Requirments.txt file, the dependencies are listed below
+This is an implementation of the Exif image viewer tool.
 
 
 ## Requirements
